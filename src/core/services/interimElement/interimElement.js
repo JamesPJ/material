@@ -354,12 +354,23 @@ function InterimElementProvider() {
           // We have to make a shallow copy of the array, because otherwise the map will break.
           return $q.all(showingInterims.slice().reverse().map(closeElement));
         } else if (options.closeTo !== undefined) {
-          return $q.all(showingInterims.slice(options.closeTo).map(closeElement));
+          return checkInterims();
         }
 
         // Hide the latest showing interim element.
         return closeElement(showingInterims[showingInterims.length - 1]);
-
+        
+        //Check if the "showingInterims" array is properly built
+        function checkInterims(){
+          if(showingInterims.length < 2){
+            $timeout(function(){
+              checkInterims();
+            });
+          }else{
+            return $q.all(showingInterims.slice(options.closeTo).map(closeElement));
+          }
+        }
+        
         function closeElement(interim) {
 
           var hideAction = interim
